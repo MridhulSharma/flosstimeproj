@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Brand colors */
+  --color-brand-navy: #1B2B4A;
+  --color-brand-navy-light: #243659;
+  --color-brand-teal: #00B4A6;
+  --color-brand-teal-dark: #009688;
+  --color-brand-teal-bg: #E6F7F6;
+
+  /* Role colors */
+  --color-role-doctor: #1B2B4A;
+  --color-role-doctor-bg: #E8EDF5;
+  --color-role-hygienist: #00B4A6;
+  --color-role-hygienist-bg: #E6F7F6;
+  --color-role-assistant: #6C63FF;
+  --color-role-assistant-bg: #EEEEFF;
+}
+
+body {
+  background: #ffffff;
+  color: #171717;
+  font-family: Arial, Helvetica, sans-serif;
+}
