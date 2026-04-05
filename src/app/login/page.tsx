@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
+import { ToothIcon } from "@/components/ui/Icon";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -59,10 +60,7 @@ function LoginForm() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-brand-teal flex items-center justify-center mb-3">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2C8 2 6 5 6 8c0 2 1 3 1 5s-1 4 0 6c1 1 3 1 5 1s4 0 5-1c1-2 0-4 0-6s1-3 1-5c0-3-2-6-6-6z" />
-              <line x1="12" y1="2" x2="12" y2="22" />
-            </svg>
+            <ToothIcon size={28} color="white" strokeWidth={1.2} />
           </div>
           <h1 className="text-2xl font-extrabold">
             <span className="text-brand-navy">Floss</span>

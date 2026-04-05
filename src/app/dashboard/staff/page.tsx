@@ -6,10 +6,12 @@ import StaffTable from "@/components/staff/StaffTable";
 import StaffModal from "@/components/staff/StaffModal";
 import StaffFilters from "@/components/staff/StaffFilters";
 import Button from "@/components/ui/Button";
+import { AddIcon, AlertIcon, ToothIcon, SearchIcon } from "@/components/ui/Icon";
 
 export default function StaffPage() {
   const [staff, setStaff] = useState<IStaff[]>([]);
   const [total, setTotal] = useState(0);
+  const [unfilteredTotal, setUnfilteredTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -42,8 +44,19 @@ export default function StaffPage() {
       const data = await res.json();
       setStaff(data.staff);
       setTotal(data.total);
+
+      // Also fetch unfiltered total for empty state detection
+      if (search || jobTypeFilter || statusFilter) {
+        const totalRes = await fetch("/api/staff?");
+        if (totalRes.ok) {
+          const totalData = await totalRes.json();
+          setUnfilteredTotal(totalData.total);
+        }
+      } else {
+        setUnfilteredTotal(data.total);
+      }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load staff");
+      setError(err instanceof Error ? err.message : "Could not load staff. Check your connection.");
     } finally {
       setLoading(false);
     }
@@ -71,6 +84,9 @@ export default function StaffPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      if (res.status === 409) {
+        throw new Error("A staff member with this email already exists.");
+      }
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || "Failed to add staff member");
@@ -89,12 +105,20 @@ export default function StaffPage() {
       setDeleteTarget(null);
       fetchStaff();
     } catch {
-      setError("Failed to delete staff member");
+      setError("Failed to delete staff member. Please try again.");
     } finally {
       setDeleting(false);
     }
   };
 
+  const clearFilters = () => {
+    setSearch("");
+    setJobTypeFilter("");
+    setStatusFilter("");
+    setSortBy("name");
+  };
+
+  const hasFilters = !!(search || jobTypeFilter || statusFilter);
   const activeCount = staff.filter((s) => s.status === "Active").length;
 
   return (
@@ -113,7 +137,7 @@ export default function StaffPage() {
             setModalOpen(true);
           }}
         >
-          + Add Staff Member
+          <AddIcon size={16} /> Add Staff Member
         </Button>
       </div>
 
@@ -129,20 +153,21 @@ export default function StaffPage() {
         onSortChange={setSortBy}
       />
 
-      {/* Error */}
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
-          {error}
+      {/* Error state */}
+      {error && !loading && (
+        <div className="bg-white rounded-xl p-12 shadow-sm border border-gray-100 text-center mb-4">
+          <AlertIcon size={44} color="#EF4444" strokeWidth={1} className="mx-auto mb-3" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">Could not load staff data</h3>
+          <p className="text-sm text-gray-500 mb-4">{error}</p>
+          <Button onClick={fetchStaff}>Try Again</Button>
         </div>
       )}
 
-      {/* Loading */}
-      {loading ? (
-        <div className="bg-white rounded-xl p-12 shadow-sm border border-gray-100 text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-brand-teal border-t-transparent rounded-full mx-auto mb-3" />
-          <p className="text-sm text-gray-500">Loading staff...</p>
-        </div>
-      ) : (
+      {/* Loading skeleton */}
+      {loading && <LoadingSkeleton />}
+
+      {/* Content */}
+      {!loading && !error && staff.length > 0 && (
         <StaffTable
           staff={staff}
           onEdit={(s) => {
@@ -153,10 +178,39 @@ export default function StaffPage() {
         />
       )}
 
+      {/* Empty state: no data at all */}
+      {!loading && !error && staff.length === 0 && !hasFilters && (
+        <div className="bg-white rounded-xl p-12 shadow-sm border border-gray-100 text-center">
+          <ToothIcon size={44} color="#00B4A6" strokeWidth={1} className="mx-auto mb-3" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">No team members yet</h3>
+          <p className="text-sm text-gray-500 mb-4">Add your first staff member to get started.</p>
+          <Button
+            onClick={() => {
+              setEditingStaff(null);
+              setModalOpen(true);
+            }}
+          >
+            <AddIcon size={16} /> Add Staff Member
+          </Button>
+        </div>
+      )}
+
+      {/* Empty state: filters active but no results */}
+      {!loading && !error && staff.length === 0 && hasFilters && (
+        <div className="bg-white rounded-xl p-12 shadow-sm border border-gray-100 text-center">
+          <SearchIcon size={44} color="#8B9AB0" strokeWidth={1} className="mx-auto mb-3" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">No results found</h3>
+          <p className="text-sm text-gray-500 mb-4">Try adjusting your search or filters.</p>
+          <Button variant="secondary" onClick={clearFilters}>
+            Clear Filters
+          </Button>
+        </div>
+      )}
+
       {/* Footer count */}
       {!loading && staff.length > 0 && (
         <p className="text-xs text-gray-400 text-center mt-4">
-          Showing {staff.length} of {total} staff members
+          Showing {staff.length} of {unfilteredTotal} staff members
         </p>
       )}
 
@@ -192,5 +246,63 @@ export default function StaffPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <>
+      <style>{`
+        @keyframes shimmer {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      `}</style>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="border-b border-gray-100 bg-gray-50/50 px-4 py-3 flex gap-4">
+          {[80, 50, 100, 70, 50, 50, 60].map((w, i) => (
+            <div
+              key={i}
+              style={{
+                width: w,
+                height: 12,
+                borderRadius: 6,
+                background: "linear-gradient(90deg, #E4ECF2 25%, #F5F8FA 50%, #E4ECF2 75%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer 1.5s infinite",
+              }}
+            />
+          ))}
+        </div>
+        {[...Array(5)].map((_, row) => (
+          <div key={row} className="px-4 py-4 border-b border-gray-50 flex items-center gap-4">
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                background: "linear-gradient(90deg, #E4ECF2 25%, #F5F8FA 50%, #E4ECF2 75%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer 1.5s infinite",
+              }}
+            />
+            {[120, 60, 140, 80, 60, 50, 70].map((w, i) => (
+              <div
+                key={i}
+                style={{
+                  width: w,
+                  height: 14,
+                  borderRadius: 6,
+                  background: "linear-gradient(90deg, #E4ECF2 25%, #F5F8FA 50%, #E4ECF2 75%)",
+                  backgroundSize: "200% 100%",
+                  animation: "shimmer 1.5s infinite",
+                  animationDelay: `${row * 0.1}s`,
+                }}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </>
   );
 }

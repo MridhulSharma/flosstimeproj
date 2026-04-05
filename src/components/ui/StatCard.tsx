@@ -1,9 +1,11 @@
 "use client";
 
+import { ReactNode } from "react";
+
 interface StatCardProps {
   label: string;
   value: string | number;
-  icon: string;
+  icon: ReactNode;
   color?: string;
   bgColor?: string;
 }
@@ -12,7 +14,7 @@ export default function StatCard({ label, value, icon, color = "text-brand-navy"
   return (
     <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
       <div className="flex items-center justify-between mb-3">
-        <span className={`w-10 h-10 rounded-lg ${bgColor} flex items-center justify-center text-lg`}>
+        <span className={`w-10 h-10 rounded-lg ${bgColor} flex items-center justify-center`}>
           {icon}
         </span>
       </div>

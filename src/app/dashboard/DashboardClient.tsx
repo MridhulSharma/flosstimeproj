@@ -3,6 +3,20 @@
 import Link from "next/link";
 import StatCard from "@/components/ui/StatCard";
 import { DashboardStats } from "@/types";
+import {
+  StaffIcon,
+  CheckIcon,
+  DoctorIcon,
+  HygienistIcon,
+  AssistantIcon,
+  RadiusIcon,
+  AddIcon,
+  WorksiteIcon,
+  ScheduleIcon,
+  AIIcon,
+  ToothIcon,
+} from "@/components/ui/Icon";
+import { ReactNode } from "react";
 
 interface DashboardClientProps {
   stats: DashboardStats;
@@ -31,12 +45,12 @@ export default function DashboardClient({ stats, availability }: DashboardClient
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        <StatCard label="Total Staff" value={stats.total} icon="👥" />
-        <StatCard label="Active" value={stats.active} icon="✅" color="text-green-600" bgColor="bg-green-50" />
-        <StatCard label="Doctors" value={stats.doctors} icon="🩺" color="text-role-doctor" bgColor="bg-role-doctor-bg" />
-        <StatCard label="Hygienists" value={stats.hygienists} icon="🦷" color="text-role-hygienist" bgColor="bg-role-hygienist-bg" />
-        <StatCard label="Assistants" value={stats.assistants} icon="🤝" color="text-role-assistant" bgColor="bg-role-assistant-bg" />
-        <StatCard label="Avg Radius" value={`${stats.avgRadius} mi`} icon="📍" color="text-brand-teal" bgColor="bg-brand-teal-bg" />
+        <StatCard label="Total Staff" value={stats.total} icon={<StaffIcon size={20} />} />
+        <StatCard label="Active" value={stats.active} icon={<CheckIcon size={20} />} color="text-green-600" bgColor="bg-green-50" />
+        <StatCard label="Doctors" value={stats.doctors} icon={<DoctorIcon size={20} />} color="text-role-doctor" bgColor="bg-role-doctor-bg" />
+        <StatCard label="Hygienists" value={stats.hygienists} icon={<HygienistIcon size={20} />} color="text-role-hygienist" bgColor="bg-role-hygienist-bg" />
+        <StatCard label="Assistants" value={stats.assistants} icon={<AssistantIcon size={20} />} color="text-role-assistant" bgColor="bg-role-assistant-bg" />
+        <StatCard label="Avg Radius" value={`${stats.avgRadius} mi`} icon={<RadiusIcon size={20} />} color="text-brand-teal" bgColor="bg-brand-teal-bg" />
       </div>
 
       {/* Charts Row */}
@@ -89,23 +103,23 @@ export default function DashboardClient({ stats, availability }: DashboardClient
       <div>
         <h2 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <QuickAction href="/dashboard/staff" icon="👤" label="Add Staff Member" />
-          <QuickAction href="/dashboard/worksites" icon="📍" label="Add Worksite" />
-          <QuickAction href="/dashboard/schedule" icon="📅" label="Build Schedule" />
-          <QuickAction href="/dashboard/ai" icon="🤖" label="AI Assistant" />
+          <QuickAction href="/dashboard/staff" icon={<AddIcon size={16} />} label="Add Staff Member" />
+          <QuickAction href="/dashboard/worksites" icon={<WorksiteIcon size={16} />} label="Add Worksite" />
+          <QuickAction href="/dashboard/schedule" icon={<ScheduleIcon size={16} />} label="Build Schedule" />
+          <QuickAction href="/dashboard/ai" icon={<AIIcon size={16} />} label="AI Assistant" />
         </div>
       </div>
     </div>
   );
 }
 
-function QuickAction({ href, icon, label }: { href: string; icon: string; label: string }) {
+function QuickAction({ href, icon, label }: { href: string; icon: ReactNode; label: string }) {
   return (
     <Link
       href={href}
       className="flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-brand-teal/30 hover:shadow-md transition-all group"
     >
-      <span className="text-xl">{icon}</span>
+      <span className="text-gray-500 group-hover:text-brand-teal transition-colors">{icon}</span>
       <span className="text-sm font-medium text-gray-700 group-hover:text-brand-teal transition-colors">
         {label}
       </span>
@@ -116,16 +130,16 @@ function QuickAction({ href, icon, label }: { href: string; icon: string; label:
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-      <span className="text-6xl mb-4">🦷</span>
+      <ToothIcon size={48} color="#00B4A6" strokeWidth={1} className="mb-4" />
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome to FlossTime!</h1>
       <p className="text-gray-500 mb-6 max-w-md">
         Your staff scheduling portal is ready. Start by adding your first team member.
       </p>
       <Link
         href="/dashboard/staff"
-        className="px-6 py-3 bg-brand-teal hover:bg-brand-teal-dark text-white font-semibold rounded-xl transition-colors"
+        className="inline-flex items-center gap-2 px-6 py-3 bg-brand-teal hover:bg-brand-teal-dark text-white font-semibold rounded-xl transition-colors"
       >
-        + Add First Staff Member
+        <AddIcon size={16} /> Add First Staff Member
       </Link>
     </div>
   );

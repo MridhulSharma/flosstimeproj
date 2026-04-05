@@ -1,6 +1,6 @@
 "use client";
 
-import { JobType, StaffStatus } from "@/types";
+import { SearchIcon } from "@/components/ui/Icon";
 
 interface StaffFiltersProps {
   search: string;
@@ -40,13 +40,14 @@ export default function StaffFilters({
     <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
       <div className="flex flex-wrap items-center gap-3">
         {/* Search */}
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[200px] relative">
+          <SearchIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             placeholder="Search staff by name, email, or address..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal"
+            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal"
           />
         </div>
 

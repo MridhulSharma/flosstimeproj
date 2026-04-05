@@ -3,15 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import {
+  DashboardIcon,
+  StaffIcon,
+  WorksiteIcon,
+  ScheduleIcon,
+  AIIcon,
+  ReportsIcon,
+  SettingsIcon,
+  SignOutIcon,
+  ToothIcon,
+} from "@/components/ui/Icon";
 
 const navItems = [
-  { label: "Dashboard", icon: "⊞", href: "/dashboard" },
-  { label: "Staff", icon: "👥", href: "/dashboard/staff", showBadge: true },
-  { label: "Worksites", icon: "📍", href: "/dashboard/worksites" },
-  { label: "Schedule Builder", icon: "📅", href: "/dashboard/schedule" },
-  { label: "AI Assistant", icon: "🤖", href: "/dashboard/ai" },
-  { label: "Reports", icon: "📊", href: "/dashboard/reports" },
-  { label: "Settings", icon: "⚙️", href: "/dashboard/settings" },
+  { label: "Dashboard", icon: DashboardIcon, href: "/dashboard" },
+  { label: "Staff", icon: StaffIcon, href: "/dashboard/staff" },
+  { label: "Worksites", icon: WorksiteIcon, href: "/dashboard/worksites" },
+  { label: "Schedule Builder", icon: ScheduleIcon, href: "/dashboard/schedule" },
+  { label: "AI Assistant", icon: AIIcon, href: "/dashboard/ai" },
+  { label: "Reports", icon: ReportsIcon, href: "/dashboard/reports" },
+  { label: "Settings", icon: SettingsIcon, href: "/dashboard/settings" },
 ];
 
 export default function Sidebar() {
@@ -27,10 +38,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="px-5 py-6 flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-brand-teal flex items-center justify-center">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2C8 2 6 5 6 8c0 2 1 3 1 5s-1 4 0 6c1 1 3 1 5 1s4 0 5-1c1-2 0-4 0-6s1-3 1-5c0-3-2-6-6-6z" />
-            <line x1="12" y1="2" x2="12" y2="22" />
-          </svg>
+          <ToothIcon size={22} color="white" strokeWidth={1.2} />
         </div>
         <div>
           <span className="text-lg font-extrabold">
@@ -49,6 +57,7 @@ export default function Sidebar() {
         <ul className="space-y-1">
           {navItems.map((item) => {
             const active = isActive(item.href);
+            const Icon = item.icon;
             return (
               <li key={item.href}>
                 <Link
@@ -59,7 +68,7 @@ export default function Sidebar() {
                       : "text-gray-300 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  <span className="text-base">{item.icon}</span>
+                  <Icon size={17} />
                   <span className="flex-1">{item.label}</span>
                 </Link>
               </li>
@@ -80,10 +89,10 @@ export default function Sidebar() {
           </div>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="text-gray-400 hover:text-white transition-colors text-lg"
+            className="text-gray-400 hover:text-white transition-colors"
             title="Sign out"
           >
-            ⏻
+            <SignOutIcon size={16} />
           </button>
         </div>
       </div>

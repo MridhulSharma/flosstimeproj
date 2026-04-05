@@ -4,6 +4,7 @@ import { useState } from "react";
 import { IStaff } from "@/types";
 import { RoleBadge, StatusBadge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import { EditIcon, DeleteIcon, ExpandIcon, CollapseIcon, ToothIcon } from "@/components/ui/Icon";
 
 interface StaffTableProps {
   staff: IStaff[];
@@ -48,7 +49,7 @@ export default function StaffTable({ staff, onEdit, onDelete }: StaffTableProps)
   if (staff.length === 0) {
     return (
       <div className="bg-white rounded-xl p-12 shadow-sm border border-gray-100 text-center">
-        <p className="text-4xl mb-3">🦷</p>
+        <ToothIcon size={44} color="#00B4A6" strokeWidth={1} className="mx-auto mb-3" />
         <h3 className="text-lg font-semibold text-gray-900 mb-1">No staff members yet</h3>
         <p className="text-sm text-gray-500">Add your first team member to get started.</p>
       </div>
@@ -102,7 +103,6 @@ function StaffRow({
   return (
     <>
       <tr className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-        {/* Staff Member */}
         <td className="px-4 py-3">
           <div className="flex items-center gap-3">
             <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold ${roleAvatarBg[staff.jobType]}`}>
@@ -114,16 +114,13 @@ function StaffRow({
             </div>
           </div>
         </td>
-        {/* Role */}
         <td className="px-4 py-3">
           <RoleBadge role={staff.jobType} />
         </td>
-        {/* Contact */}
         <td className="px-4 py-3">
           <p className="text-gray-700">{staff.email}</p>
           <p className="text-xs text-gray-400">{staff.phone}</p>
         </td>
-        {/* Available Days */}
         <td className="px-4 py-3">
           <div className="flex gap-1 flex-wrap">
             {staff.availableDays.map((d) => (
@@ -133,7 +130,6 @@ function StaffRow({
             ))}
           </div>
         </td>
-        {/* Travel */}
         <td className="px-4 py-3">
           <div className="flex items-center gap-2">
             <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -145,21 +141,19 @@ function StaffRow({
             <span className="text-xs text-gray-600">{staff.travelRadius} mi</span>
           </div>
         </td>
-        {/* Status */}
         <td className="px-4 py-3">
           <StatusBadge status={staff.status} />
         </td>
-        {/* Actions */}
         <td className="px-4 py-3 text-right">
           <div className="flex items-center justify-end gap-1">
-            <Button variant="ghost" size="sm" onClick={onToggle} title="Expand">
-              {expanded ? "▲" : "▼"}
+            <Button variant="ghost" size="sm" onClick={onToggle} title={expanded ? "Collapse" : "Expand"}>
+              {expanded ? <CollapseIcon size={14} /> : <ExpandIcon size={14} />}
             </Button>
             <Button variant="ghost" size="sm" onClick={onEdit} title="Edit">
-              ✏️
+              <EditIcon size={14} />
             </Button>
             <Button variant="ghost" size="sm" onClick={onDelete} title="Remove">
-              🗑️
+              <DeleteIcon size={14} />
             </Button>
           </div>
         </td>

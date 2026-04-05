@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { IStaff, StaffFormData, JobType, AvailableDay, StaffStatus } from "@/types";
 import Button from "@/components/ui/Button";
+import { CloseIcon } from "@/components/ui/Icon";
 
 interface StaffModalProps {
   isOpen: boolean;
@@ -34,10 +35,18 @@ const emptyForm: StaffFormData = {
   notes: "",
 };
 
+interface FieldErrors {
+  name?: string;
+  email?: string;
+  phone?: string;
+  travelRadius?: string;
+}
+
 export default function StaffModal({ isOpen, onClose, onSave, staff }: StaffModalProps) {
   const [form, setForm] = useState<StaffFormData>(emptyForm);
-  const [loading, setSaving] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   useEffect(() => {
     if (staff) {
@@ -56,6 +65,7 @@ export default function StaffModal({ isOpen, onClose, onSave, staff }: StaffModa
       setForm(emptyForm);
     }
     setError("");
+    setFieldErrors({});
   }, [staff, isOpen]);
 
   const toggleDay = (day: AvailableDay) => {
@@ -67,11 +77,34 @@ export default function StaffModal({ isOpen, onClose, onSave, staff }: StaffModa
     }));
   };
 
-  const handleSubmit = async () => {
-    if (!form.name.trim() || !form.email.trim()) {
-      setError("Name and email are required.");
-      return;
+  const validate = (): boolean => {
+    const errors: FieldErrors = {};
+
+    if (!form.name.trim()) {
+      errors.name = "Name is required.";
     }
+
+    if (!form.email.trim()) {
+      errors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      errors.email = "Please enter a valid email address.";
+    }
+
+    if (form.phone && !/^[\d\s\-\(\)\+]{7,15}$/.test(form.phone)) {
+      errors.phone = "Please enter a valid phone number.";
+    }
+
+    if (form.travelRadius < 5 || form.travelRadius > 100) {
+      errors.travelRadius = "Travel radius must be between 5 and 100 miles.";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+
     setError("");
     setSaving(true);
     try {
@@ -89,10 +122,16 @@ export default function StaffModal({ isOpen, onClose, onSave, staff }: StaffModa
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4">
-        <div className="px-6 py-5 border-b border-gray-100">
+        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-900">
             {staff ? "Edit Staff Member" : "Add Staff Member"}
           </h2>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <CloseIcon size={16} />
+          </button>
         </div>
 
         <div className="px-6 py-5 space-y-6">
@@ -114,8 +153,9 @@ export default function StaffModal({ isOpen, onClose, onSave, staff }: StaffModa
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal ${fieldErrors.name ? "border-red-300" : "border-gray-200"}`}
                 />
+                {fieldErrors.name && <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>}
               </div>
               <div className="col-span-2 sm:col-span-1">
                 <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Job Type *</label>
@@ -135,8 +175,9 @@ export default function StaffModal({ isOpen, onClose, onSave, staff }: StaffModa
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal ${fieldErrors.email ? "border-red-300" : "border-gray-200"}`}
                 />
+                {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
               </div>
               <div className="col-span-2 sm:col-span-1">
                 <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Phone</label>
@@ -144,8 +185,9 @@ export default function StaffModal({ isOpen, onClose, onSave, staff }: StaffModa
                   type="tel"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal ${fieldErrors.phone ? "border-red-300" : "border-gray-200"}`}
                 />
+                {fieldErrors.phone && <p className="text-xs text-red-500 mt-1">{fieldErrors.phone}</p>}
               </div>
             </div>
           </div>
@@ -244,11 +286,11 @@ export default function StaffModal({ isOpen, onClose, onSave, staff }: StaffModa
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
-          <Button variant="secondary" onClick={onClose} disabled={loading}>
+          <Button variant="secondary" onClick={onClose} disabled={saving}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? "Saving..." : staff ? "Update" : "Add Staff"}
+          <Button onClick={handleSubmit} disabled={saving}>
+            {saving ? "Saving..." : staff ? "Update" : "Add Staff"}
           </Button>
         </div>
       </div>
