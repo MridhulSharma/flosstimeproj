@@ -27,3 +27,14 @@ export interface DashboardStats {
   assistants: number;
   avgRadius: number;
 }
+
+export interface ApiResponse<T> {
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface StaffListResponse {
+  staff: IStaff[];
+  total: number;
+}

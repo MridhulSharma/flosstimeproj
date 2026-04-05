@@ -30,7 +30,7 @@ const StaffSchema = new Schema<IStaff>(
       default: [],
     },
     homeAddress: { type: String, default: "" },
-    travelRadius: { type: Number, default: 25, min: 0 },
+    travelRadius: { type: Number, default: 25, min: 5, max: 100 },
     status: {
       type: String,
       enum: ["Active", "Inactive"],
