@@ -15,6 +15,7 @@ import {
   ScheduleIcon,
   AIIcon,
   ToothIcon,
+  BuildingIcon,
 } from "@/components/ui/Icon";
 import { ReactNode } from "react";
 
@@ -44,13 +45,18 @@ export default function DashboardClient({ stats, availability }: DashboardClient
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-8">
         <StatCard label="Total Staff" value={stats.total} icon={<StaffIcon size={20} />} />
-        <StatCard label="Active" value={stats.active} icon={<CheckIcon size={20} />} color="text-green-600" bgColor="bg-green-50" />
+        <StatCard label="Active Staff" value={stats.active} icon={<CheckIcon size={20} />} color="text-green-600" bgColor="bg-green-50" />
+        <StatCard label="Total Worksites" value={stats.totalWorksites} icon={<BuildingIcon size={20} />} color="text-brand-teal" bgColor="bg-brand-teal-bg" />
+        <StatCard label="This Month" value={stats.scheduledThisMonth} icon={<ScheduleIcon size={20} />} color="text-blue-600" bgColor="bg-blue-50" />
+      </div>
+
+      {/* Role breakdown */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
         <StatCard label="Doctors" value={stats.doctors} icon={<DoctorIcon size={20} />} color="text-role-doctor" bgColor="bg-role-doctor-bg" />
         <StatCard label="Hygienists" value={stats.hygienists} icon={<HygienistIcon size={20} />} color="text-role-hygienist" bgColor="bg-role-hygienist-bg" />
         <StatCard label="Assistants" value={stats.assistants} icon={<AssistantIcon size={20} />} color="text-role-assistant" bgColor="bg-role-assistant-bg" />
-        <StatCard label="Avg Radius" value={`${stats.avgRadius} mi`} icon={<RadiusIcon size={20} />} color="text-brand-teal" bgColor="bg-brand-teal-bg" />
       </div>
 
       {/* Charts Row */}

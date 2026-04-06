@@ -26,7 +26,60 @@ export interface DashboardStats {
   hygienists: number;
   assistants: number;
   avgRadius: number;
+  totalWorksites: number;
+  scheduledThisMonth: number;
 }
+
+// Worksites
+export interface IWorksite {
+  _id: string;
+  clientName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  primaryContact: {
+    name: string;
+    title: string;
+    email: string;
+    phone: string;
+  };
+  notes: string;
+  status: "Active" | "Inactive";
+  contractStart?: string;
+  contractEnd?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type WorksiteFormData = Omit<IWorksite, "_id" | "createdAt" | "updatedAt">;
+
+// Assignments
+export type AssignmentStatus = "Scheduled" | "Confirmed" | "Completed" | "Cancelled";
+
+export interface IAssignmentMember {
+  staffId: string;
+  name: string;
+  jobType: string;
+  role: string;
+}
+
+export interface IAssignment {
+  _id: string;
+  title: string;
+  worksiteId: string;
+  clientName: string;
+  date: string;
+  endDate?: string;
+  teamSize: number;
+  teamMembers: IAssignmentMember[];
+  status: AssignmentStatus;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type AssignmentFormData = Omit<IAssignment, "_id" | "createdAt" | "updatedAt">;
 
 export interface ApiResponse<T> {
   data?: T;

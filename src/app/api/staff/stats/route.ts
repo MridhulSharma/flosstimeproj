@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { auth } from "@/lib/auth";
 import Staff from "@/models/Staff";
+import Worksite from "@/models/Worksite";
+import Assignment from "@/models/Assignment";
 
 export async function GET() {
   const session = await auth();
@@ -12,7 +14,12 @@ export async function GET() {
   try {
     await connectDB();
 
-    const [total, active, doctors, hygienists, assistants, radiusData] =
+    // Current month range
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+    const [total, active, doctors, hygienists, assistants, radiusData, totalWorksites, scheduledThisMonth] =
       await Promise.all([
         Staff.countDocuments(),
         Staff.countDocuments({ status: "Active" }),
@@ -22,6 +29,11 @@ export async function GET() {
         Staff.aggregate([
           { $group: { _id: null, avgRadius: { $avg: "$travelRadius" } } },
         ]),
+        Worksite.countDocuments({ status: "Active" }),
+        Assignment.countDocuments({
+          date: { $gte: monthStart, $lte: monthEnd },
+          status: { $in: ["Scheduled", "Confirmed"] },
+        }),
       ]);
 
     const avgRadius = radiusData[0]?.avgRadius
@@ -35,6 +47,8 @@ export async function GET() {
       hygienists,
       assistants,
       avgRadius,
+      totalWorksites,
+      scheduledThisMonth,
     });
   } catch (error) {
     console.error("GET /api/staff/stats error:", error);

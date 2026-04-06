@@ -375,3 +375,104 @@ export function ToothIcon(props: IconProps) {
     </Svg>
   );
 }
+
+// ─── Worksites & Schedule ───────────���─────────────────────
+
+export function BuildingIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="4" y="2" width="16" height="20" rx="2" />
+      <line x1="9" y1="22" x2="9" y2="18" />
+      <line x1="15" y1="22" x2="15" y2="18" />
+      <rect x="8" y="6" width="3" height="3" rx="0.5" />
+      <rect x="13" y="6" width="3" height="3" rx="0.5" />
+      <rect x="8" y="11" width="3" height="3" rx="0.5" />
+      <rect x="13" y="11" width="3" height="3" rx="0.5" />
+    </Svg>
+  );
+}
+
+export function ContactIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+      <rect x="16" y="16" width="6" height="4" rx="1" />
+    </Svg>
+  );
+}
+
+export function ContractIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <line x1="10" y1="9" x2="8" y2="9" />
+    </Svg>
+  );
+}
+
+export function LeftArrowIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <polyline points="15 18 9 12 15 6" />
+    </Svg>
+  );
+}
+
+export function RightArrowIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <polyline points="9 18 15 12 9 6" />
+    </Svg>
+  );
+}
+
+export function MinusIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </Svg>
+  );
+}
+
+export function CheckCircleIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="9 12 12 15 16 9" />
+    </Svg>
+  );
+}
+
+export function TeamIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </Svg>
+  );
+}
+
+export function WarningIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </Svg>
+  );
+}
+
+export function ClockIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </Svg>
+  );
+}

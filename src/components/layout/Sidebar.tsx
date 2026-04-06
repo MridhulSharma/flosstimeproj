@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
 import {
   DashboardIcon,
   StaffIcon,
@@ -15,11 +16,18 @@ import {
   ToothIcon,
 } from "@/components/ui/Icon";
 
-const navItems = [
+interface NavItem {
+  label: string;
+  icon: typeof DashboardIcon;
+  href: string;
+  badgeKey?: "staff" | "worksites" | "schedule";
+}
+
+const navItems: NavItem[] = [
   { label: "Dashboard", icon: DashboardIcon, href: "/dashboard" },
-  { label: "Staff", icon: StaffIcon, href: "/dashboard/staff" },
-  { label: "Worksites", icon: WorksiteIcon, href: "/dashboard/worksites" },
-  { label: "Schedule Builder", icon: ScheduleIcon, href: "/dashboard/schedule" },
+  { label: "Staff", icon: StaffIcon, href: "/dashboard/staff", badgeKey: "staff" },
+  { label: "Worksites", icon: WorksiteIcon, href: "/dashboard/worksites", badgeKey: "worksites" },
+  { label: "Schedule Builder", icon: ScheduleIcon, href: "/dashboard/schedule", badgeKey: "schedule" },
   { label: "AI Assistant", icon: AIIcon, href: "/dashboard/ai" },
   { label: "Reports", icon: ReportsIcon, href: "/dashboard/reports" },
   { label: "Settings", icon: SettingsIcon, href: "/dashboard/settings" },
@@ -27,6 +35,20 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [counts, setCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    fetch("/api/staff/stats")
+      .then((r) => r.json())
+      .then((d) => {
+        setCounts({
+          staff: d.total || 0,
+          worksites: d.totalWorksites || 0,
+          schedule: d.scheduledThisMonth || 0,
+        });
+      })
+      .catch(() => {});
+  }, [pathname]);
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -58,6 +80,7 @@ export default function Sidebar() {
           {navItems.map((item) => {
             const active = isActive(item.href);
             const Icon = item.icon;
+            const badgeCount = item.badgeKey ? counts[item.badgeKey] : 0;
             return (
               <li key={item.href}>
                 <Link
@@ -70,6 +93,11 @@ export default function Sidebar() {
                 >
                   <Icon size={17} />
                   <span className="flex-1">{item.label}</span>
+                  {badgeCount > 0 && (
+                    <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-teal/20 text-brand-teal">
+                      {badgeCount}
+                    </span>
+                  )}
                 </Link>
               </li>
             );
