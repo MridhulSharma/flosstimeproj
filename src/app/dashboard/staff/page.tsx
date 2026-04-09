@@ -7,6 +7,7 @@ import StaffModal from "@/components/staff/StaffModal";
 import StaffFilters from "@/components/staff/StaffFilters";
 import Button from "@/components/ui/Button";
 import { AddIcon, AlertIcon, ToothIcon, SearchIcon } from "@/components/ui/Icon";
+import AskAIButton from "@/components/ai/AskAIButton";
 
 export default function StaffPage() {
   const [staff, setStaff] = useState<IStaff[]>([]);
@@ -126,7 +127,14 @@ export default function StaffPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Staff Management</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-gray-900">Staff Management</h1>
+            <AskAIButton
+              context="staff"
+              prompt="Help me find the best available staff for a new assignment"
+              label="Ask AI"
+            />
+          </div>
           <p className="text-sm text-gray-500 mt-1">
             {total} total members &middot; {activeCount} active
           </p>

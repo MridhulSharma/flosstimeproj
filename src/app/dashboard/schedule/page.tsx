@@ -6,7 +6,10 @@ import Button from "@/components/ui/Button";
 import {
   ScheduleIcon, LeftArrowIcon, RightArrowIcon, MinusIcon, AddIcon,
   BuildingIcon, SearchIcon, CheckCircleIcon, AlertIcon, DeleteIcon, CloseIcon,
+  SparkleIcon,
 } from "@/components/ui/Icon";
+import AskAIButton from "@/components/ai/AskAIButton";
+import { useAIAssistant } from "@/components/ai/AIAssistantContext";
 
 const DAY_NAMES: AvailableDay[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const STATUS_COLORS: Record<string, string> = {
@@ -24,6 +27,7 @@ const ROLE_AVATAR: Record<string, string> = {
 };
 
 export default function SchedulePage() {
+  const { openAssistant } = useAIAssistant();
   // Assignments
   const [assignments, setAssignments] = useState<IAssignment[]>([]);
   const [loadingAssignments, setLoadingAssignments] = useState(true);
@@ -171,7 +175,10 @@ export default function SchedulePage() {
       <div className="flex-[3] min-w-0">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Schedule Builder</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900">Schedule Builder</h1>
+              <AskAIButton context="schedule" label="Ask AI about schedule" />
+            </div>
             <p className="text-sm text-gray-500 mt-1">{assignments.length} assignments</p>
           </div>
         </div>
@@ -291,6 +298,32 @@ export default function SchedulePage() {
                 <span key={i} className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${ROLE_AVATAR[role] || "bg-gray-100 text-gray-600"}`}>{role}</span>
               ))}
             </div>
+
+            {selectedDate && selectedWorksite && (
+              <div className="mt-3 p-3 rounded-lg border border-brand-teal/30 bg-brand-teal-bg flex items-center gap-2">
+                <SparkleIcon size={13} className="text-brand-teal flex-shrink-0" />
+                <p className="text-[11px] text-brand-navy flex-1 leading-snug">
+                  Let AI suggest the best team for this date
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const formattedDate = selectedDate.toLocaleDateString("en-US", {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+                    openAssistant(
+                      `Suggest the best ${teamSize}-person team for ${selectedWorksite.clientName} on ${formattedDate}. Check availability and travel radius.`
+                    );
+                  }}
+                  className="text-[11px] font-semibold text-brand-teal hover:underline whitespace-nowrap"
+                >
+                  Ask AI →
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 4. Team Selection */}

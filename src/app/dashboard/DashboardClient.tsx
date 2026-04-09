@@ -18,6 +18,8 @@ import {
   BuildingIcon,
 } from "@/components/ui/Icon";
 import { ReactNode } from "react";
+import AskAIButton from "@/components/ai/AskAIButton";
+import { useAIAssistant } from "@/components/ai/AIAssistantContext";
 
 interface DashboardClientProps {
   stats: DashboardStats;
@@ -25,6 +27,7 @@ interface DashboardClientProps {
 }
 
 export default function DashboardClient({ stats, availability }: DashboardClientProps) {
+  const { openAssistant } = useAIAssistant();
   if (stats.total === 0) {
     return <EmptyState />;
   }
@@ -40,7 +43,10 @@ export default function DashboardClient({ stats, availability }: DashboardClient
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <AskAIButton context="dashboard" label="Ask AI" />
+        </div>
         <p className="text-sm text-gray-500 mt-1">FlossTime staff overview</p>
       </div>
 
@@ -112,24 +118,45 @@ export default function DashboardClient({ stats, availability }: DashboardClient
           <QuickAction href="/dashboard/staff" icon={<AddIcon size={16} />} label="Add Staff Member" />
           <QuickAction href="/dashboard/worksites" icon={<WorksiteIcon size={16} />} label="Add Worksite" />
           <QuickAction href="/dashboard/schedule" icon={<ScheduleIcon size={16} />} label="Build Schedule" />
-          <QuickAction href="/dashboard/ai" icon={<AIIcon size={16} />} label="AI Assistant" />
+          <QuickAction onClick={() => openAssistant()} icon={<AIIcon size={16} />} label="AI Assistant" />
         </div>
       </div>
     </div>
   );
 }
 
-function QuickAction({ href, icon, label }: { href: string; icon: ReactNode; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-brand-teal/30 hover:shadow-md transition-all group"
-    >
+function QuickAction({
+  href,
+  onClick,
+  icon,
+  label,
+}: {
+  href?: string;
+  onClick?: () => void;
+  icon: ReactNode;
+  label: string;
+}) {
+  const className =
+    "flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-brand-teal/30 hover:shadow-md transition-all group text-left w-full";
+  const inner = (
+    <>
       <span className="text-gray-500 group-hover:text-brand-teal transition-colors">{icon}</span>
       <span className="text-sm font-medium text-gray-700 group-hover:text-brand-teal transition-colors">
         {label}
       </span>
-    </Link>
+    </>
+  );
+  if (href) {
+    return (
+      <Link href={href} className={className}>
+        {inner}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" onClick={onClick} className={className}>
+      {inner}
+    </button>
   );
 }
 

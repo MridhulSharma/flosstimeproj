@@ -14,13 +14,16 @@ import {
   SettingsIcon,
   SignOutIcon,
   ToothIcon,
+  SparkleIcon,
 } from "@/components/ui/Icon";
+import { useAIAssistant } from "@/components/ai/AIAssistantContext";
 
 interface NavItem {
   label: string;
   icon: typeof DashboardIcon;
   href: string;
   badgeKey?: "staff" | "worksites" | "schedule";
+  isAI?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -28,7 +31,7 @@ const navItems: NavItem[] = [
   { label: "Staff", icon: StaffIcon, href: "/dashboard/staff", badgeKey: "staff" },
   { label: "Worksites", icon: WorksiteIcon, href: "/dashboard/worksites", badgeKey: "worksites" },
   { label: "Schedule Builder", icon: ScheduleIcon, href: "/dashboard/schedule", badgeKey: "schedule" },
-  { label: "AI Assistant", icon: AIIcon, href: "/dashboard/ai" },
+  { label: "AI Assistant", icon: SparkleIcon, href: "#", isAI: true },
   { label: "Reports", icon: ReportsIcon, href: "/dashboard/reports" },
   { label: "Settings", icon: SettingsIcon, href: "/dashboard/settings" },
 ];
@@ -36,6 +39,7 @@ const navItems: NavItem[] = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const { isOpen, openAssistant, closeAssistant, aiConfigured } = useAIAssistant();
 
   useEffect(() => {
     fetch("/api/staff/stats")
@@ -78,9 +82,35 @@ export default function Sidebar() {
         </p>
         <ul className="space-y-1">
           {navItems.map((item) => {
-            const active = isActive(item.href);
             const Icon = item.icon;
             const badgeCount = item.badgeKey ? counts[item.badgeKey] : 0;
+
+            // AI nav item opens the overlay instead of navigating
+            if (item.isAI) {
+              return (
+                <li key="ai-assistant">
+                  <button
+                    onClick={() => (isOpen ? closeAssistant() : openAssistant())}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      isOpen
+                        ? "text-brand-teal bg-brand-teal/10 border-l-[3px] border-brand-teal"
+                        : "text-gray-300 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    <Icon size={17} />
+                    <span className="flex-1 text-left">{item.label}</span>
+                    <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-brand-teal text-white tracking-wider">
+                      AI
+                    </span>
+                    {aiConfigured && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-teal animate-pulse" />
+                    )}
+                  </button>
+                </li>
+              );
+            }
+
+            const active = isActive(item.href);
             return (
               <li key={item.href}>
                 <Link

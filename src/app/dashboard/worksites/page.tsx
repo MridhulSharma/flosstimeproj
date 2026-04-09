@@ -9,6 +9,7 @@ import {
   AddIcon, AlertIcon, BuildingIcon, SearchIcon,
   ContactIcon, EmailIcon, PhoneIcon, EditIcon, DeleteIcon,
 } from "@/components/ui/Icon";
+import AskAIButton from "@/components/ai/AskAIButton";
 
 export default function WorksitesPage() {
   const [worksites, setWorksites] = useState<IWorksite[]>([]);
@@ -100,7 +101,14 @@ export default function WorksitesPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Worksite Management</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-gray-900">Worksite Management</h1>
+            <AskAIButton
+              context="worksites"
+              prompt="Which worksites have no upcoming assignments?"
+              label="Ask AI"
+            />
+          </div>
           <p className="text-sm text-gray-500 mt-1">{total} total &middot; {activeCount} active</p>
         </div>
         <Button onClick={() => { setEditing(null); setModalOpen(true); }}>
